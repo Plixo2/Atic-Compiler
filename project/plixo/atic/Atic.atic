@@ -1,0 +1,11 @@
+
+
+struct Position {
+    from: number;
+    to: number;
+}
+
+struct AticError {
+    position: Position;
+    msg: string;
+}

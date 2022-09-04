@@ -1,0 +1,37 @@
+use core;
+use plixo.atic.tokens.Tokenizer;
+use plixo.atic.Atic;
+
+struct Node {
+    record: TokenRecord;
+    name: string;
+    isLeaf: bool;
+    children: List<Node>;
+}
+
+fn getNode(this: Node, name: string) -> Optional<Node> {
+    let i: number = 0;
+    while i < this.children.size {
+        let child: Node = this.children[i];
+        if child.name == name {
+            return Some(child);
+        }
+
+        i = i + 1;
+    }
+
+    return None();
+}
+
+fn isPresent(this: Node, name: string) -> Optional<Node> {
+    let n: Node = getNode(this, name);
+    if n matches Some(_) {
+        return true;
+    }
+    return false;
+}
+
+fn child(this: Node) -> Node {
+    return this.children[0];
+    //TODO
+}

@@ -1,0 +1,38 @@
+use plixo.atic.Path;
+use plixo.atic.Context;
+use plixo.atic.tokens.Tokenizer;
+use plixo.atic.Atic;
+
+enum PathEntry {
+    Function();
+    Enum();
+    EnumEntry();
+    Global();
+    Interface();
+}
+
+struct Project {
+    entries: Map<Path,PathEntry>;
+    file: string;
+    units: List<Unit>;
+    extensions: lst string;
+}
+
+fn getEntry(project: Project, path: Path, environment: Environment) -> Result<PathEntry,AticError> {
+    let main: Optional<PathEntry> = get(project.entries,path);
+    if main matches Some(entry) {
+        return Result.Ok(entry);
+    } else {
+        let spath: Path = pathAdd(environment.path,path);
+        let other: Optional<PathEntry> = get(project.entries,spath);
+         if other matches Some(entry) {
+                return Result.Ok(entry);
+         }
+    }
+    return Result.Error({ position = invalidPosition, msg = "cant find path " + path.path });
+}
+
+struct Unit {
+    path: Path;
+    src: string;
+}

@@ -1,0 +1,66 @@
+use plixo.atic.project.Project;
+use plixo.atic.Path;
+use plixo.atic.tokens.Node;
+use plixo.atic.Atic;
+use plixo.atic.tokens.Tokenizer;
+
+fn Main() {
+    let project: Project = {
+        entries = newMap(),
+        file = "res/project",
+        units = newList(),
+        extensions = ["atic"]
+    }
+    compileProject(project);
+
+
+
+}
+
+fn compileProject(project: Project) {
+    let files: List<string> = newList();
+    forFile(project.file,files);
+
+
+    let units: List<{ path: Path; src: string; }> = newList();
+    forEach(files, fn (ref: string) -> void {
+        if containsArray(project.extensions, getExtension(ref)) {
+            let src: string = loadFile(ref);
+            let path: Path = newPath("path");
+            insert(units,{ path = path, src = src });
+        } else {
+            print(ref);
+        }
+    });
+    forEach(units, fn (ref: { path: Path; src: string; }) -> void {
+        let res: Result<string,AticError> = generateNode(ref.src);
+        print("res: " + toString(res));
+        if res matches Error(error) {
+            print(error);
+        } else if res matches Ok(ok) {
+            print("Ok " + ok);
+        }
+    });
+
+
+}
+
+fn generateNode(src: string) -> Result<string,AticError> {
+    let result: Result<List<Token>,AticError> = generateTokens(newList(),src);
+    if result matches Error(error) {
+        return Result.Error(error);
+    }
+    return Result.Ok("OK!");
+}
+
+fn forFile(file: string, list: List<string>) {
+    if isDirectory(file) {
+        let files: List<string> = listFiles(file);
+        forEach(files,fn (ref: string) -> void {
+            forFile(ref,list);
+        });
+    } else {
+        insert(list,file);
+    }
+}
+

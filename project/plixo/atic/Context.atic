@@ -1,0 +1,41 @@
+use plixo.atic.Type;
+use plixo.atic.Path;
+use plixo.atic.Atic;
+
+enum Location {
+    Global();
+    Local();
+    Input();
+    Closure();
+}
+enum Modifier {
+    Final();
+    Variable();
+}
+
+struct Context {
+    environment: Environment;
+    variables: List<Variable>;
+    returnType: Type;
+}
+
+fn ContextCopy(context: Context) -> Context {
+    let list: List<Variable> = newList();
+    addAll(list,context.variables);
+    return {
+        environment = context.environment,
+        variables = list,
+        returnType = context.returnType
+    };
+}
+
+struct Environment {
+    path: Path;
+}
+
+struct Variable {
+    path: Path;
+    type: Type;
+    location: Location;
+    modifier: Modifier;
+}

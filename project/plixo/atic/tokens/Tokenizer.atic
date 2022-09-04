@@ -1,0 +1,21 @@
+use plixo.atic.Atic;
+
+
+struct Token {
+    alias: string;
+    peek: string;
+    capture: string;
+}
+struct TokenRecord {
+    token: Token;
+    data: string;
+    position: Position;
+}
+
+
+global invalidPosition: Position = { from = -1, to = -1 };
+
+
+fn generateTokens(tokens: List<Token>, text: string) -> Result<List<TokenRecord>,AticError> {
+    return Result.Ok(newList());
+}

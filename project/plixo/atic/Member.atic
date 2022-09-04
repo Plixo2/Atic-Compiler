@@ -1,0 +1,26 @@
+use plixo.atic.Path;
+use plixo.atic.Expression;
+use plixo.atic.Context;
+use plixo.atic.Type;
+use plixo.atic.tokens.Tokenizer;
+use plixo.atic.Atic;
+
+struct Member {
+    type: MemberType
+    compounds: List<Access>;
+}
+
+enum MemberType {
+    Function(Path);
+    Variable(Variable);
+}
+
+enum Access {
+    Array(Type, Expression);
+    Call(Type, List<Expression>);
+    Member(Type, number);
+}
+
+fn MemberType(expression: Expression, context: Context) -> Result<Type,AticError> {
+    return Result.Ok(Type.Primitive(-1));
+}

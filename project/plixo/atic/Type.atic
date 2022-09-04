@@ -1,0 +1,28 @@
+use plixo.atic.Path;
+use plixo.atic.Atic;
+
+enum Type {
+    Struct(StructType);
+    Array(ArrayType);
+    Function(FunctionType);
+    Primitive(number);
+}
+
+struct ArrayType {
+    type: Type
+}
+
+struct FunctionType {
+     input: List<Type>
+     output: Type
+}
+
+global number_: Type = Type.Primitive(0);
+global bool_: Type = Type.Primitive(1);
+global void_: Type = Type.Primitive(2);
+
+struct StructType {
+    members: List<Type>;
+    path: Path;
+}
+
