@@ -40,15 +40,10 @@ native fn <T> getAt(map: List<T>, index: number) -> T {}
 native fn <T> contains(list: List<T>, element: T) -> bool {}
 native fn <T> containsArray(list: lst T, element: T) -> bool {}
 
+
 native fn isDirectory(file: string) -> bool {}
 native fn listFiles(file: string) -> List<string> {}
 native fn loadFile(file: string) -> string {}
 native fn getExtension(file: string) -> string {}
 native fn regexTest(regex: string, text: string) -> bool {}
 native fn <T> toString(object: T) -> string {}
-
-
-
-
-
-
