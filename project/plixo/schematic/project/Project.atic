@@ -1,7 +1,8 @@
-use plixo.atic.Path;
-use plixo.atic.Context;
-use plixo.atic.tokens.Tokenizer;
-use plixo.atic.Atic;
+use plixo.schematic.Path;
+use plixo.schematic.Context;
+use plixo.schematic.tokens.Tokenizer;
+use plixo.schematic.tokens.Node;
+use plixo.schematic.Atic;
 
 enum PathEntry {
     Function();
@@ -29,10 +30,11 @@ fn getEntry(project: Project, path: Path, environment: Environment) -> Result<Pa
                 return Result.Ok(entry);
          }
     }
-    return Result.Error({ position = invalidPosition, msg = "cant find path " + path.path });
+    return Result.Error({ position = newPosition(-1,-1), msg = "cant find path " + path.path });
 }
 
 struct Unit {
     path: Path;
     src: string;
+    node: Optional<Node>;
 }

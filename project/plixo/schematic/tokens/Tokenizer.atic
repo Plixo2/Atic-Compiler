@@ -1,0 +1,73 @@
+use plixo.schematic.Atic;
+
+
+struct Token {
+    alias: string;
+    peek: fn (string) -> bool;
+    capture: fn (string) -> bool;
+}
+struct TokenRecord {
+    token: Token;
+    data: string;
+    position: Position;
+}
+
+
+
+
+fn generateTokens(tokens: List<Token>, text: string) -> Result<List<TokenRecord>,AticError> {
+    let list: List<TokenRecord> = newList();
+    let charCount: number = 0;
+    let length_: number = length(text);
+    let capturedChars: string = "";
+
+    while charCount < length_ {
+        let subString: string = substring(text,charCount);
+        let tokenC: Optional<Token> = findToken(subString,tokens);
+        if tokenC matches None() {
+            return Result.Error({ position = newPosition(charCount,charCount+1), msg = "invalid token " + subString });
+        } else if tokenC matches Some(token_) {
+            let token: Token = token_;
+            capturedChars = capturedChars + charAt(text, charCount);
+            let countCopy: number = charCount;
+            charCount = charCount + 1;
+            let flag: bool = true;
+            while charCount < length_ && flag {
+                 capturedChars = capturedChars + charAt(text, charCount);
+                 charCount = charCount + 1;
+
+                 if !token.capture(capturedChars) {
+                    capturedChars = substring2(capturedChars,0,length(capturedChars)-1);
+                    charCount = charCount - 1;
+                    flag = false;
+                 }
+            }
+
+            let record: TokenRecord = {
+                token = token,
+                data = capturedChars,
+                position = newPosition(countCopy,charCount),
+            };
+            insert(list,record);
+            capturedChars = "";
+        }
+    }
+    return Result.Ok(list);
+}
+
+fn findToken(str: string, list: List<Token>) -> Optional<Token> {
+
+     let i: number = 0;
+     let s: number = list.size;
+
+     while i < s {
+         let element: Token = getAt(list,i);
+         if element.peek(str) {
+            return Optional.Some(element);
+         }
+         i = i + 1;
+     }
+
+    return Optional.None();
+}
+

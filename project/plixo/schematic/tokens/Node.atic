@@ -1,6 +1,5 @@
-use core;
-use plixo.atic.tokens.Tokenizer;
-use plixo.atic.Atic;
+use plixo.schematic.tokens.Tokenizer;
+use plixo.schematic.Atic;
 
 struct Node {
     record: TokenRecord;
@@ -12,19 +11,19 @@ struct Node {
 fn getNode(this: Node, name: string) -> Optional<Node> {
     let i: number = 0;
     while i < this.children.size {
-        let child: Node = this.children[i];
+        let child: Node = getAt(this.children,i);
         if child.name == name {
-            return Some(child);
+            return Optional.Some(child);
         }
 
         i = i + 1;
     }
 
-    return None();
+    return Optional.None();
 }
 
-fn isPresent(this: Node, name: string) -> Optional<Node> {
-    let n: Node = getNode(this, name);
+fn isPresent(this: Node, name: string) -> bool {
+    let n: Optional<Node> = getNode(this, name);
     if n matches Some(_) {
         return true;
     }
@@ -32,6 +31,6 @@ fn isPresent(this: Node, name: string) -> Optional<Node> {
 }
 
 fn child(this: Node) -> Node {
-    return this.children[0];
+    return getAt(this.children,0);
     //TODO
 }

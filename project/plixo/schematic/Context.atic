@@ -1,6 +1,6 @@
-use plixo.atic.Type;
-use plixo.atic.Path;
-use plixo.atic.Atic;
+use plixo.schematic.Type;
+use plixo.schematic.Path;
+use plixo.schematic.Atic;
 
 enum Location {
     Global();

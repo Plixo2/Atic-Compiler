@@ -16,6 +16,10 @@ struct Map<K,V> {
 
 }
 
+struct Ref<T> {
+    value: T;
+}
+
 fn <T> forEach(list: List<T>,consumer: fn(T) -> void) {
     let i: number = 0;
     let s: number = list.size;
@@ -45,5 +49,10 @@ native fn isDirectory(file: string) -> bool {}
 native fn listFiles(file: string) -> List<string> {}
 native fn loadFile(file: string) -> string {}
 native fn getExtension(file: string) -> string {}
-native fn regexTest(regex: string, text: string) -> bool {}
+native fn regexTest(text: string, regex: string) -> bool {}
 native fn <T> toString(object: T) -> string {}
+native fn <T> length(text: string) -> number {}
+native fn <T> substring(text: string,count: number) -> string {}
+native fn <T> substring2(text: string,from: number, to: number) -> string {}
+native fn <T> charAt(text: string,index: number) -> string {}
+native fn <T> split(text: string,pattern: string) -> string {}

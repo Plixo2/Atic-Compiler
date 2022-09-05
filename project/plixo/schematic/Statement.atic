@@ -1,7 +1,7 @@
-use plixo.atic.Expression;
-use plixo.atic.Context;
-use plixo.atic.Member;
-use plixo.atic.Atic;
+use plixo.schematic.Expression;
+use plixo.schematic.Context;
+use plixo.schematic.Member;
+use plixo.schematic.Atic;
 
 enum Statement {
     Block(BlockStatement);

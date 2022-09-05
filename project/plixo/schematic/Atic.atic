@@ -9,3 +9,7 @@ struct AticError {
     position: Position;
     msg: string;
 }
+
+fn newPosition(from: number, to: number) -> Position {
+    return { from = from, to = to };
+}
