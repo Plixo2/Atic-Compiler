@@ -5,11 +5,9 @@ struct Path {
 }
 
 fn newPath(file: string) -> Path {
-    return { path = file };
+    return Path(file);
 }
 
 fn pathAdd(path: Path, pathB: Path) -> Path {
-    return {
-        path = path.path + "." + pathB.path
-    };
+    return Path(path.path + "." + pathB.path);
 }

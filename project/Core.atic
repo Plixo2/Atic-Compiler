@@ -8,11 +8,11 @@ enum Result<T,E> {
     Ok(T);
 }
 
-struct List<T> {
+native struct List<T> {
     size: number;
 }
 
-struct Map<K,V> {
+native struct Map<K,V> {
 
 }
 
@@ -29,6 +29,53 @@ fn <T> forEach(list: List<T>,consumer: fn(T) -> void) {
         consumer(element);
         i = i + 1;
     }
+}
+
+fn <T> forEachWhile(list: List<T>,consumer: fn(T) -> bool) -> bool {
+    let i: number = 0;
+    let s: number = list.size;
+    while i < s {
+        let element: T = getAt(list,i);
+        if !consumer(element) {
+           return false;
+        }
+        i = i + 1;
+    }
+    return true;
+}
+
+fn <T> filter(list: List<T>,predicate: fn(T) -> bool) -> List<T> {
+    let newLst: List<T> = newList();
+
+    let i: number = 0;
+    let s: number = list.size;
+
+    while i < s {
+        let element: T = getAt(list,i);
+        if predicate(element) {
+            insert(newLst,element);
+        }
+        i = i + 1;
+    }
+
+    return newLst;
+}
+
+fn <T> findAny(list: List<T>, predicate: fn(T) -> Optional<T>) -> Optional<T> {
+    let newLst: List<T> = newList();
+
+    let i: number = 0;
+    let s: number = list.size;
+
+    while i < s {
+        let element: T = getAt(list,i);
+        if predicate(element) matches Some(res) {
+            return Optional.Some(res);
+        }
+        i = i + 1;
+    }
+
+    return Optional.None();
 }
 
 native fn <T> print(o: T) {}
@@ -55,4 +102,4 @@ native fn <T> length(text: string) -> number {}
 native fn <T> substring(text: string,count: number) -> string {}
 native fn <T> substring2(text: string,from: number, to: number) -> string {}
 native fn <T> charAt(text: string,index: number) -> string {}
-native fn <T> split(text: string,pattern: string) -> string {}
+native fn <T> split(text: string,pattern: string) -> List<string> {}

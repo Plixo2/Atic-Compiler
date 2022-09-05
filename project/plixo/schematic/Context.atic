@@ -22,11 +22,11 @@ struct Context {
 fn ContextCopy(context: Context) -> Context {
     let list: List<Variable> = newList();
     addAll(list,context.variables);
-    return {
-        environment = context.environment,
-        variables = list,
-        returnType = context.returnType
-    };
+    return Context(
+        context.environment,
+        list,
+        context.returnType
+    );
 }
 
 struct Environment {

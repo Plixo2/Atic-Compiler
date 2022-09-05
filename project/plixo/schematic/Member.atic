@@ -21,6 +21,6 @@ enum Access {
     Member(Type, number);
 }
 
-fn MemberType(expression: Expression, context: Context) -> Result<Type,AticError> {
+fn MemberType(member: Member, context: Context) -> Result<Type,AticError> {
     return Result.Ok(Type.Primitive(-1));
 }

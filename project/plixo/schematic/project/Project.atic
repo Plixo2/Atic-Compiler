@@ -30,7 +30,7 @@ fn getEntry(project: Project, path: Path, environment: Environment) -> Result<Pa
                 return Result.Ok(entry);
          }
     }
-    return Result.Error({ position = newPosition(-1,-1), msg = "cant find path " + path.path });
+    return Result.Error({ position = Position(-1,-1,-1), msg = "cant find path " + path.path });
 }
 
 struct Unit {

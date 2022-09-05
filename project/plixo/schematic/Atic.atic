@@ -3,6 +3,7 @@
 struct Position {
     from: number;
     to: number;
+    line: number;
 }
 
 struct AticError {
@@ -10,6 +11,3 @@ struct AticError {
     msg: string;
 }
 
-fn newPosition(from: number, to: number) -> Position {
-    return { from = from, to = to };
-}

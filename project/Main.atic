@@ -13,20 +13,19 @@ fn Main() {
     }
     compileProject(project);
 
-
 }
 
 fn compileProject(project: Project) {
     let files: List<string> = newList();
     forFile(project.file,files);
 
-
     let units: List<Unit> = newList();
     forEach(files, fn (ref: string) -> void {
         if containsArray(project.extensions, getExtension(ref)) {
             let src: string = loadFile(ref);
             let path: Path = newPath("path");
-            insert(units,{ path = path, src = src, node = Optional.None() });
+            let unit: Unit = { path = path, src = src, node = Optional.None()};
+            insert(units, unit);
         } else {
             print("Dont include " + getExtension(ref));
         }
@@ -34,39 +33,56 @@ fn compileProject(project: Project) {
 
     let tokenList: List<Token> = genTokenList();
 
-    let errorRef: Ref<Optional<AticError>> = { value = Optional.None() }
-    forEach(units, fn (ref: Unit) -> void {
+    let errorRef: Ref<Optional<AticError>> = Ref(Optional.None());
+    if !forEachWhile(units, fn (ref: Unit) -> bool {
            let node: Result<Node,AticError> = generateNode(ref.src,tokenList);
            if node matches Error(error) {
                 errorRef.value = Optional.Some(error);
-           } else if node matches Ok(node) {
+                return false;
+           } else matches Ok(node) {
                 ref.node = Optional.Some(node);
+                return true;
            }
-    });
-    let errorValue: Optional<AticError> = errorRef.value;
-    if errorValue matches Some(error) {
-        //print("Error: " + toString(error));
+    }) {
+        let errorValue: Optional<AticError> = errorRef.value;
+        if errorValue matches Some(error) {
+            print("Error: " + toString(error));
+        }
     }
+
 
 }
 
-fn generateNode(src: string, token: List<Token>) -> Result<Node,AticError> {
+fn generateNode(src: string, tokens: List<Token>) -> Result<Node,AticError> {
     let list: List<TokenRecord> = newList();
-    forEach(split(src,"\n"), fn (line: string) -> void {
-        let result: Result<List<TokenRecord>,AticError> = generateTokens(token,line);
+
+    let lineCount: Ref<number> = Ref(0);
+    let error: Optional<AticError> = findAny(split(src,"\n"), fn (line: string) -> Optional<AticError> {
+        let result: Result<List<TokenRecord>,AticError> = generateTokens(tokens,line,lineCount.value);
+        lineCount.value = lineCount.value + 1;
         if result matches Error(error_) {
-            let error: AticError = error_;
-            print("Error here: ");
-            print(toString(error));
-        } else if result matches Ok(list_) {
+           return Optional.Some(error_);
+        } else matches Ok(list_) {
             addAll(list,list_);
+            return Optional.None();
         }
     });
-    print("Output: ");
-    forEach(list, fn (tokenSub: TokenRecord) -> void {
-        print("Data: "+ tokenSub.data);
-    });
-    return Result.Error({ position = newPosition(-1,-1), msg = "???" });
+
+    if error matches Some(t) {
+        return Result.Error(t);
+    } else matches None() {
+         print("Output: " );
+         let filtered: List<TokenRecord> = filter(list, fn (token: TokenRecord) -> bool {
+                if token.token.alias == "#comment" return false;
+                else if token.token.alias == "#whitespace" return false;
+                else return true;
+         });
+         forEach(filtered, fn (tokenSub: TokenRecord) -> void {
+             print("Data: "+ tokenSub.data);
+         });
+        return Result.Ok(list);
+    }
+
 }
 
 fn forFile(file: string, list: List<string>) {
@@ -83,8 +99,8 @@ fn forFile(file: string, list: List<string>) {
 fn genTokenList() -> List<Token> {
     let list: List<Token> = newList();
 
-    let A_comment: Token = genToken(".comment", "\\/\\/", "\\/\\/.*");
-    let A_whitespace: Token = genToken("", "\\s", "\\s*");
+    let A_comment: Token = genToken("#comment", "\\/\\/", "\\/\\/.*");
+    let A_whitespace: Token = genToken("#whitespace", "\\s", "\\s*");
     let A_assign_arrow: Token = genToken("->", "->", "(-|->)");
     let A_parentheses_o: Token = genToken("(", "\\(", "\\(");
     let A_parentheses_c: Token = genToken(")", "\\)", "\\)");
@@ -190,14 +206,3 @@ fn genTokenList() -> List<Token> {
     return list;
 }
 
-fn genToken(alias: string, peek: string, capture: string) -> Token  {
-    return {
-        alias = alias,
-        peek = fn (text: string) -> bool {
-            return regexTest(text, "^" + peek);
-        },
-        capture = fn (text_: string) -> bool {
-            return regexTest(text_, "^" + capture + "$");
-        }
-    };
-}
